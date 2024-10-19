@@ -584,14 +584,18 @@ fn evaluate_like(
         "^{}$",
         rhs.to_lowercase().replace('%', ".*").replace('_', ".")
     );
+
     let regex_result = Regex::new(pattern);
     if regex_result.is_err() {
         return Err(regex_result.err().unwrap().to_string());
     }
+
     let regex = regex_result.ok().unwrap();
     let lhs = evaluate_expression(env, &expr.input, titles, object)?
         .as_text()
+        .trim()
         .to_lowercase();
+
     Ok(Value::Boolean(regex.is_match(&lhs)))
 }
 
@@ -606,14 +610,18 @@ fn evaluate_regex(
         "^{}$",
         rhs.to_lowercase().replace('%', ".*").replace('_', ".")
     );
+
     let regex_result = Regex::new(pattern);
     if regex_result.is_err() {
         return Err(regex_result.err().unwrap().to_string());
     }
+
     let regex = regex_result.ok().unwrap();
     let input = evaluate_expression(env, &expr.input, titles, object)?
         .as_text()
+        .trim()
         .to_lowercase();
+
     Ok(Value::Boolean(regex.is_match(&input)))
 }
 
