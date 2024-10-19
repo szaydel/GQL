@@ -156,7 +156,7 @@ fn select_commits(repo: &gix::Repository, selected_columns: &[String]) -> Result
             }
 
             if column_name == "message" {
-                let message = Value::Text(commit.message.to_string());
+                let message = Value::Text(commit.message.to_string().trim().to_owned());
                 values.push(message);
                 continue;
             }
