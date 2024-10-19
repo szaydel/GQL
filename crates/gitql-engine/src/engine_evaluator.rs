@@ -38,6 +38,7 @@ use gitql_core::types::DataType;
 use gitql_core::value::Value;
 
 use regex::Regex;
+use regex::RegexBuilder;
 use std::cmp::Ordering;
 use std::ops::Not;
 use std::string::String;
@@ -585,7 +586,11 @@ fn evaluate_like(
         rhs.to_lowercase().replace('%', ".*").replace('_', ".")
     );
 
-    let regex_result = Regex::new(pattern);
+    let regex_result = RegexBuilder::new(pattern)
+        .multi_line(true)
+        .unicode(true)
+        .build();
+
     if regex_result.is_err() {
         return Err(regex_result.err().unwrap().to_string());
     }
@@ -593,7 +598,6 @@ fn evaluate_like(
     let regex = regex_result.ok().unwrap();
     let lhs = evaluate_expression(env, &expr.input, titles, object)?
         .as_text()
-        .trim()
         .to_lowercase();
 
     Ok(Value::Boolean(regex.is_match(&lhs)))
@@ -611,7 +615,11 @@ fn evaluate_regex(
         rhs.to_lowercase().replace('%', ".*").replace('_', ".")
     );
 
-    let regex_result = Regex::new(pattern);
+    let regex_result = RegexBuilder::new(pattern)
+        .multi_line(true)
+        .unicode(true)
+        .build();
+
     if regex_result.is_err() {
         return Err(regex_result.err().unwrap().to_string());
     }
@@ -619,7 +627,6 @@ fn evaluate_regex(
     let regex = regex_result.ok().unwrap();
     let input = evaluate_expression(env, &expr.input, titles, object)?
         .as_text()
-        .trim()
         .to_lowercase();
 
     Ok(Value::Boolean(regex.is_match(&input)))
